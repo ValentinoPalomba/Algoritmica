@@ -1,6 +1,6 @@
 //
 //  main.c
-//  AlberoTernario
+//  Alberi
 //
 //  Created by Valentino Palomba on 07/05/2019.
 //  Copyright © 2019 Valentino Palomba. All rights reserved.
