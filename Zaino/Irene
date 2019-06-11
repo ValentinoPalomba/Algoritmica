@@ -1,1 +1,107 @@
+//
+//  zaino.c
+//  
+//
+//  Created by Valentino Palomba on 10/06/2019.
+//
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+	int v;
+	int w;
+}object;
+
+//STAMPA VALORE E PESO DEGLI OGGETTI
+void printObj(object* A, int nObj) {
+	int i = 0;
+	for(; i < nObj; i ++) {
+		printf("%d %d\n", A[i].v, A[i].w);
+	}
+}
+
+//LAVORA SULLA MATRICE E RESTITUISCE IL VALORE
+int zaino(int** C, object* A, int nObj, int W){
+	int j = 0;
+	for(; j < W + 1; j ++) {
+		C[0][j] = 0;
+	}
+	int i = 0;
+	for(; i < nObj + 1; i ++) {
+		C[i][0] = 0;
+	}
+	i = 1;
+	for(; i < nObj + 1; i ++) {
+		j = 1;
+		for(; j < W + 1; j ++) {
+			C[i][j] = C[i-1][j];
+			if(j >= A[i-1].w) {
+				int m = C[i-1][j-A[i-1].w] + A[i-1].v;
+				if(m > C[i][j])
+					C[i][j] = m;
+			}
+		}
+	}
+	return C[nObj][W];
+}
+
+//RICOSTRUISCE LA REFURTIVA
+void taken(int** C, object* A, int nObj, int W){
+	int i = nObj;
+	int j = W;
+	while(i!= 0) {
+		if(C[i][j] != C[i-1][j]) {
+			printf("Oggetto %d, valore: %d, peso %d\n",
+				   i, A[i-1].v, A[i-1].w
+				   );
+			i = i-1;
+			j = j-A[i-1].w;
+			
+		}
+		else {
+			i = i-1;
+		}
+	}
+}
+
+int main() {
+	int nObj, W, i = 0;
+	printf("Numero oggetti:\n");
+	scanf("%d", &nObj);
+	object* A = malloc(sizeof(object) * nObj);
+	printf("Peso massimo:\n");
+	scanf("%d", &W);
+	for(; i < nObj; i ++) {
+		scanf("%d %d", &A[i].v, &A[i].w);
+	}
+	int** C;
+	C = malloc(sizeof(int*) * (nObj + 1));
+	i = 0;
+	for(; i < nObj + 1; i ++) {
+		C[i] = malloc(sizeof(int) * (W + 1));
+	}
+	int result = zaino(C, A, nObj, W);
+	printf("Risultato: %d\n", result);
+	//printObj(A, nObj);
+	printf("Matrice\n");
+	i = 0;
+	int j;
+	for(; i < nObj + 1; i ++){
+		for(j = 0; j < W + 1; j ++) {
+			printf("%d ", C[i][j]);
+		}
+		printf("\n");
+	}
+	taken(C, A, nObj, W);
+}
+
+/*
+ ESEMPIO DI INPUT:
+ 3
+ 8
+ 10 5
+ 6 4
+ 5 4
+ */
 
