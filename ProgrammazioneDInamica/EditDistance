@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int min(int a, int b) {
+    if(a < b)
+   	 return a;
+    else
+   	 return b;
+}
+
+int editDis(char* x, int n, char* y, int m, int** M) {
+    int i = 0;
+    for(; i < n + 1; i ++) {
+   	 M[i][0] = i;
+    }
+    int j = 0;
+    for(; j < m + 1; j ++) {
+   	 M[0][j] = j;
+    }
+    i = 1;
+    int P = 0;
+    for(; i < n + 1; i ++) {
+   	 j = 1;
+   	 for(; j < m + 1; j ++) {
+   		 if(x[i-1] == y[j-1])
+   			 P = 0;
+   		 else
+   			 P = 1;
+   		 M[i][j] = min(M[i-1][j-1] + P,
+   			 	min(M[i-1][j] + 1, M[i][j-1] + 1));
+   	 }
+    }
+    return M[n][m];
+}
+
+int allinea(char* x, int n, char* y, int m, int** M, char* alx, char* aly) {
+    int h = n + m;
+    int i = n;
+    int j = m;
+    while(i > 0 || j > 0) {
+   	 if(
+   		 (i > 0 && j > 0)
+   		 &&
+   		 (
+   			 (M[i][j] == M[i-1][j-1] && x[i-1] == y[j-1])
+   			 ||
+   			 (M[i][j] == M[i-1][j-1] + 1 && x[i-1] != y[j-1])
+   		 )
+   	 ){
+   		 alx[h] = x[i-1];
+   		 aly[h] = y[j-1];
+   		 i--;
+   		 j--;
+   		 
+   	 }
+   	 else if (j > 0 && M[i][j] == M[i][j] + 1) {
+   		 alx[h] = '-';
+   		 aly[h] = y[j-1];
+   		 j --;
+   	 }
+   	 else {
+   		 alx[h] = x[i-1];
+   		 aly[h] = '-';
+   		 i --;
+   	 }
+   	 h --;
+    }
+    return h;
+}
+
+int main() {
+    char x[100];
+    char y[100];
+    scanf("%s", x);
+    scanf("%s", y);
+    int n = strlen(x);
+    int m = strlen(y);
+    int i = 0, j;
+    int** M;
+    M = malloc(sizeof(int*) * (n+2));
+    for(; i < n + 2; i ++) {
+   	 M[i] = malloc(sizeof(int) * (m + 2));
+    }
+    printf("%d\n", editDis(x, n, y, m, M));
+    i = 0;
+    for(; i < n + 1; i ++) {
+   	 j = 0;
+   	 for(; j < m + 1; j ++) {
+   		 printf("%d ", M[i][j]);
+   	 }
+   	 printf("\n");
+    }
+    char alx[n + m];
+    char aly[n + m];
+    i = 0;
+    int init = allinea(x, n, y, m, M, alx, aly);
+    i = init;
+    for(; i <= n + m; i ++) {
+   	 printf("%c", alx[i]);
+    }
+    printf("\n");
+    j = init;
+    for(; j <= n + m; j ++) {
+   	 printf("%c", aly[j]);
+    }
+    printf("\n");
+}
